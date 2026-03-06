@@ -14,8 +14,8 @@ DraggableDesktopWidget {
     readonly property string widgetImage:   widgetData?.image   || ""
     readonly property real   widgetOpacity: widgetData?.opacity || 1.0
 
-    implicitWidth:  (widgetImage == "" ? 50 : sticker.sourceSize.width)  * widgetScale
-    implicitHeight: (widgetImage == "" ? 50 : sticker.sourceSize.height) * widgetScale
+    implicitWidth:  Math.round((widgetImage == "" ? 50 : sticker.sourceSize.width)  * widgetScale)
+    implicitHeight: Math.round((widgetImage == "" ? 50 : sticker.sourceSize.height) * widgetScale)
     width:  implicitWidth
     height: implicitHeight
     minScale: 0.1
