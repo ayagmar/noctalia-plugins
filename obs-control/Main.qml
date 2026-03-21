@@ -44,6 +44,7 @@ Item {
   readonly property bool showBarWhenRecording: settings.showBarWhenRecording ?? defaults.showBarWhenRecording ?? true
   readonly property bool showBarWhenReplay: settings.showBarWhenReplay ?? defaults.showBarWhenReplay ?? false
   readonly property bool showBarWhenStreaming: settings.showBarWhenStreaming ?? defaults.showBarWhenStreaming ?? true
+  readonly property bool showBarWhenReady: settings.showBarWhenReady ?? defaults.showBarWhenReady ?? true
   readonly property bool showControlCenterWhenRecording: settings.showControlCenterWhenRecording ?? defaults.showControlCenterWhenRecording ?? true
   readonly property bool showControlCenterWhenReplay: settings.showControlCenterWhenReplay ?? defaults.showControlCenterWhenReplay ?? true
   readonly property bool showControlCenterWhenStreaming: settings.showControlCenterWhenStreaming ?? defaults.showControlCenterWhenStreaming ?? true
@@ -91,6 +92,7 @@ Item {
     showBarWhenRecording: showBarWhenRecording,
     showBarWhenReplay: showBarWhenReplay,
     showBarWhenStreaming: showBarWhenStreaming,
+    showBarWhenReady: showBarWhenReady,
     showControlCenterWhenRecording: showControlCenterWhenRecording,
     showControlCenterWhenReplay: showControlCenterWhenReplay,
     showControlCenterWhenStreaming: showControlCenterWhenStreaming,
@@ -445,6 +447,33 @@ Item {
     }
 
     pluginApi.togglePanel(screen, anchorItem)
+  }
+
+  function openSettings(screen, closePanelFirst) {
+    if (!screen || !pluginApi?.manifest) {
+      return
+    }
+
+    if (closePanelFirst) {
+      pluginApi.closePanel(screen)
+    }
+
+    Qt.callLater(function() {
+      BarService.openPluginSettings(screen, pluginApi.manifest)
+    })
+  }
+
+  function openSettingsForCurrentContext() {
+    const panelScreen = pluginApi?.panelOpenScreen
+
+    if (panelScreen) {
+      root.openSettings(panelScreen, true)
+      return
+    }
+
+    pluginApi.withCurrentScreen(function(screen) {
+      root.openSettings(screen, false)
+    })
   }
 
   function togglePanelFromIpc() {
@@ -841,6 +870,10 @@ Item {
 
     function togglePanel() {
       root.togglePanelFromIpc()
+    }
+
+    function openSettings() {
+      root.openSettingsForCurrentContext()
     }
 
     function refreshStatus() {
